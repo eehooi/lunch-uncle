@@ -48,6 +48,8 @@ export async function runLoop(history, message, env) {
         content: result,
       });
     }
+
+    round++;
   }
 
   return "Uncle tried too many times already. Ask something simpler.";
