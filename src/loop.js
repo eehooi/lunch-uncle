@@ -1,9 +1,9 @@
 import { buildSystemPrompt } from "./prompt.js";
 import { toolDefinitions, executeTool } from "./tools.js";
 
-// TODO: set the base URL and model for your OpenAI-compatible provider.
-const LLM_BASE_URL = "TODO";
-const LLM_MODEL = "TODO";
+// OpenCode Go endpoint and model. Key comes from env.OPENCODE_API_KEY.
+const LLM_BASE_URL = "https://opencode.ai/zen/go/v1";
+const LLM_MODEL = "kimi-k3";
 
 const LLM_TIMEOUT_MS = 20_000;
 const MAX_ROUNDS = 8;
