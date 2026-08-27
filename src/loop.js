@@ -18,6 +18,10 @@ const FALLBACK_REPLY = "Just go Berseh Food Centre lah.";
 export async function runLoop(history, message, env) {
   // Without both keys Uncle cannot search or think, so give a safe answer.
   if (!env.GOOGLE_PLACES_API_KEY || !env.OPENCODE_API_KEY) {
+    const missing = ["GOOGLE_PLACES_API_KEY", "OPENCODE_API_KEY"].filter(
+      (name) => !env[name],
+    );
+    console.error(`falling back, missing secrets: ${missing.join(", ")}`);
     return FALLBACK_REPLY;
   }
 

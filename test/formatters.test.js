@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  CT_HUB_2,
   formatPlaces,
   formatForecast,
   formatBusArrivals,
@@ -51,14 +52,14 @@ test("formatBusArrivals converts durations to whole minutes", () => {
 });
 
 test("haversineMetres measures CT Hub 2 to Lavender MRT at under 600 m", () => {
-  const ctHub2 = { latitude: 1.3115, longitude: 103.8615 };
+  const ctHub2 = CT_HUB_2;
   const lavenderMrt = { latitude: 1.3073, longitude: 103.8631 };
   const distance = haversineMetres(ctHub2, lavenderMrt);
   assert.ok(distance > 400 && distance < 550, `got ${distance}`);
 });
 
 test("formatPlaces keeps open_now and tolerates a missing location", () => {
-  const origin = { latitude: 1.3115, longitude: 103.8615 };
+  const origin = CT_HUB_2;
   const places = [
     {
       displayName: { text: "Tiong Kee" },
@@ -79,4 +80,20 @@ test("formatPlaces keeps open_now and tolerates a missing location", () => {
     distance_m: null,
     open_now: null,
   });
+});
+
+test("formatPlaces drops places outside the walking radius", () => {
+  const places = [
+    {
+      displayName: { text: "Near" },
+      location: { latitude: 1.3092, longitude: 103.8628 },
+    },
+    {
+      displayName: { text: "Bedok 85 Fengshan" },
+      location: { latitude: 1.3236, longitude: 103.9273 },
+    },
+  ];
+
+  const names = formatPlaces(places, CT_HUB_2).map((p) => p.name);
+  assert.deepEqual(names, ["Near"]);
 });

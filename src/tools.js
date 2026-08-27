@@ -132,15 +132,20 @@ async function findLunchPlaces({ query, open_now = false }, env) {
 }
 
 /**
- * Shape Places API results into the fields Uncle needs.
+ * Shape Places API results into the fields Uncle needs, dropping anything
+ * further than radius metres from origin.
  */
-export function formatPlaces(places, origin) {
-  return places.map(({ displayName, rating, location, currentOpeningHours }) => ({
+export function formatPlaces(places, origin, radius = SEARCH_RADIUS_METRES) {
+  const shaped = places.map(({ displayName, rating, location, currentOpeningHours }) => ({
     name: displayName?.text ?? "Unnamed",
     rating: rating ?? null,
     distance_m: location ? Math.round(haversineMetres(origin, location)) : null,
     open_now: currentOpeningHours?.openNow ?? null,
   }));
+
+  // locationBias only ranks, it does not filter, so Text Search can return
+  // places well outside the radius. Uncle only recommends walking distance.
+  return shaped.filter(({ distance_m }) => distance_m === null || distance_m <= radius);
 }
 
 /**
